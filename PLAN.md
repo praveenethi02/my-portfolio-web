@@ -2,9 +2,9 @@
 
 ## Day 1 – Setup & foundation
 
-- [ ] chore: initialize Next.js + TypeScript + Tailwind + ESLint/Prettier
-- [ ] feat: add shadcn/ui, next-themes, dark mode default + theme toggle
-- [ ] feat: base layout, navbar, footer with GitHub/LinkedIn/Jira link icons, home hero
+- [x] chore: initialize Next.js + TypeScript + Tailwind + ESLint/Prettier
+- [x] feat: add shadcn/ui, next-themes, dark mode default + theme toggle
+- [x] feat: base layout, navbar, footer with GitHub/LinkedIn/Jira link icons, home hero
 
 ## Day 2 – Core UI pages
 

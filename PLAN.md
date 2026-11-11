@@ -8,9 +8,9 @@
 
 ## Day 2 – Core UI pages
 
-- [ ] feat: home page sections (about, highlights, CTA)
-- [ ] feat: projects page UI with static sample data
-- [ ] feat: contact page UI (with social links) + animations
+- [x] feat: home page sections (about, highlights, CTA)
+- [x] feat: projects page UI with static sample data
+- [x] feat: contact page UI (with social links) + animations
 
 ## Day 3 – Database
 

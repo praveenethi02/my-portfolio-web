@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { FadeIn } from "@/components/motion/fade-in";
 import { PageHeader } from "@/components/page-header";
 import { ProjectCard } from "@/components/projects/project-card";
 import { sampleProjects } from "@/data/sample-projects";
@@ -24,9 +25,12 @@ export default function ProjectsPage() {
       />
 
       <ul className="grid gap-4 sm:grid-cols-2">
-        {projects.map((project) => (
+        {projects.map((project, index) => (
           <li key={project.id}>
-            <ProjectCard project={project} />
+            {/* Each card starts a little later than the one before it */}
+            <FadeIn delay={index * 0.08} className="h-full">
+              <ProjectCard project={project} />
+            </FadeIn>
           </li>
         ))}
       </ul>

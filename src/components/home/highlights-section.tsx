@@ -1,3 +1,4 @@
+import { FadeIn } from "@/components/motion/fade-in";
 import { SectionHeading } from "@/components/section-heading";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { homeContent } from "@/config/home";
@@ -14,19 +15,21 @@ export function HighlightsSection() {
         />
 
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {homeContent.highlights.map(({ title, description, icon: Icon }) => (
+          {homeContent.highlights.map(({ title, description, icon: Icon }, index) => (
             <li key={title}>
-              <Card className="h-full transition-shadow hover:ring-primary/50">
-                <CardHeader className="gap-3">
-                  <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <Icon aria-hidden="true" className="size-5" />
-                  </span>
-                  <CardTitle>{title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>{description}</CardDescription>
-                </CardContent>
-              </Card>
+              <FadeIn delay={index * 0.1} className="h-full">
+                <Card className="h-full transition-shadow hover:ring-primary/50">
+                  <CardHeader className="gap-3">
+                    <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon aria-hidden="true" className="size-5" />
+                    </span>
+                    <CardTitle>{title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>{description}</CardDescription>
+                  </CardContent>
+                </Card>
+              </FadeIn>
             </li>
           ))}
         </ul>

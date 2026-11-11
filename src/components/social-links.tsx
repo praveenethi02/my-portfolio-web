@@ -5,13 +5,14 @@ import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
-type SocialLink = {
+export type SocialLink = {
   label: string;
   href: string;
   Icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
-const socialLinks: SocialLink[] = [
+// Exported so other components (like the contact page) use the same list
+export const socialLinks: SocialLink[] = [
   { label: "GitHub", href: siteConfig.socialLinks.github, Icon: GitHubIcon },
   { label: "LinkedIn", href: siteConfig.socialLinks.linkedin, Icon: LinkedInIcon },
   { label: "Jira", href: siteConfig.socialLinks.jira, Icon: JiraIcon },

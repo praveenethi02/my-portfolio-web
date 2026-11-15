@@ -11,25 +11,47 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Project } from "@/generated/prisma/client";
+import { formatRepoName } from "@/lib/format";
 import { getLanguageColor } from "@/lib/language-colors";
-import type { Project } from "@/types/project";
 
-// Turns "2026-11-09" into "Nov 2026". timeZone "UTC" stops the date shifting to the previous day.
+// The card only needs these fields from a database Project row
+export type ProjectCardData = Pick<
+  Project,
+  | "name"
+  | "description"
+  | "language"
+  | "topics"
+  | "stars"
+  | "repoUrl"
+  | "liveUrl"
+  | "featured"
+  | "githubUpdatedAt"
+  | "updatedAt"
+>;
+
+// Turns a date into "Nov 2026". timeZone "UTC" stops the date shifting to the previous day.
 const dateFormatter = new Intl.DateTimeFormat("en", {
   month: "short",
   year: "numeric",
   timeZone: "UTC",
 });
 
-export function ProjectCard({ project }: { project: Project }) {
+export function ProjectCard({ project }: { project: ProjectCardData }) {
+  const title = formatRepoName(project.name);
+  // Prefer the last push on GitHub; fall back to when the row last changed
+  const updated = project.githubUpdatedAt ?? project.updatedAt;
+
   return (
     <Card className="h-full transition-shadow hover:ring-primary/50">
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-lg">{project.name}</CardTitle>
+          <CardTitle className="text-lg">{title}</CardTitle>
           {project.featured && <Badge>Featured</Badge>}
         </div>
-        <CardDescription>{project.description}</CardDescription>
+        <CardDescription className={project.description ? undefined : "italic"}>
+          {project.description ?? "No description yet."}
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col justify-end gap-4">
@@ -61,9 +83,7 @@ export function ProjectCard({ project }: { project: Project }) {
               <span className="sr-only"> stars</span>
             </span>
           </span>
-          <time dateTime={project.updatedAt}>
-            Updated {dateFormatter.format(new Date(project.updatedAt))}
-          </time>
+          <time dateTime={updated.toISOString()}>Updated {dateFormatter.format(updated)}</time>
         </div>
       </CardContent>
 
@@ -76,7 +96,7 @@ export function ProjectCard({ project }: { project: Project }) {
         >
           <GitHubIcon />
           Code
-          <span className="sr-only"> for {project.name} (opens in a new tab)</span>
+          <span className="sr-only"> for {title} (opens in a new tab)</span>
         </a>
         {project.liveUrl && (
           <a
@@ -87,7 +107,7 @@ export function ProjectCard({ project }: { project: Project }) {
           >
             <ExternalLink aria-hidden="true" />
             Live demo
-            <span className="sr-only"> of {project.name} (opens in a new tab)</span>
+            <span className="sr-only"> of {title} (opens in a new tab)</span>
           </a>
         )}
       </CardFooter>

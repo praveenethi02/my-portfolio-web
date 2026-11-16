@@ -14,15 +14,15 @@
 
 ## Day 3 – Database
 
-- [ ] chore: set up Prisma + Neon connection and env handling
-- [ ] feat: database schema (Project, Skill, Experience, Education, ContactMessage, SyncLog, Settings incl. social link URLs)
-- [ ] feat: seed script + db helper queries
+- [x] chore: set up Prisma + Neon connection and env handling
+- [x] feat: database schema (Project, Skill, Experience, Education, ContactMessage, SyncLog, Settings incl. social link URLs)
+- [x] feat: seed script + db helper queries
 
 ## Day 4 – GitHub integration
 
-- [ ] feat: GitHub API client with types and error handling
-- [ ] feat: sync GitHub repos into DB
-- [ ] feat: projects page reads real data from DB (pin/hide support)
+- [x] feat: GitHub API client with types and error handling
+- [x] feat: sync GitHub repos into DB
+- [x] feat: projects page reads real data from DB (pin/hide support)
 
 ## Day 5 – Skills
 

@@ -37,6 +37,7 @@ model Project {
   name            String
   description     String?
   language        String?
+  languages       Json? // bytes of code per language, e.g. { "TypeScript": 52310, "CSS": 1200 }
   topics          String[]
   stars           Int       @default(0)
   repoUrl         String

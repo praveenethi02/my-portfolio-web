@@ -1,12 +1,13 @@
 import "server-only";
 
 import { db } from "@/lib/db";
-import { getUserRepos, type GitHubRepo } from "@/lib/github";
+import { getRepoLanguages, getUserRepos, type GitHubRepo } from "@/lib/github";
 import { SETTINGS_ID } from "@/lib/queries";
 
 export type GitHubSyncResult = {
   synced: number;
   removed: number;
+  languagesFetched: number;
 };
 
 // Only repos you built yourself are shown: forks and archived repos are skipped
@@ -41,13 +42,32 @@ export async function syncGitHubProjects(): Promise<GitHubSyncResult> {
 
     const repos = (await getUserRepos(username)).filter(shouldShow);
 
+    // What we already stored, so unchanged repos do not need a new languages request
+    const existing = await db.project.findMany({
+      where: { githubId: { not: null } },
+      select: { githubId: true, githubUpdatedAt: true, languages: true },
+    });
+    const existingById = new Map(existing.map((project) => [project.githubId, project]));
+
+    let languagesFetched = 0;
+
     // Insert new repos and update existing ones, matched by GitHub's id
     for (const repo of repos) {
       const data = toProjectData(repo);
+
+      // Languages only change when new code is pushed, so ask GitHub again only then.
+      // This keeps each sync well inside GitHub's rate limit.
+      const stored = existingById.get(repo.id);
+      const unchanged =
+        stored?.languages != null &&
+        stored.githubUpdatedAt?.getTime() === data.githubUpdatedAt?.getTime();
+      const languages = unchanged ? undefined : await getRepoLanguages(username, repo.name);
+      if (languages) languagesFetched++;
+
       await db.project.upsert({
         where: { githubId: repo.id },
-        update: data,
-        create: { githubId: repo.id, ...data },
+        update: { ...data, ...(languages && { languages }) },
+        create: { githubId: repo.id, ...data, languages: languages ?? {} },
       });
     }
 
@@ -70,7 +90,7 @@ export async function syncGitHubProjects(): Promise<GitHubSyncResult> {
       },
     });
 
-    return { synced: repos.length, removed };
+    return { synced: repos.length, removed, languagesFetched };
   } catch (error) {
     // Record the failure so /admin can show what went wrong, then pass the error on
     await db.syncLog.create({

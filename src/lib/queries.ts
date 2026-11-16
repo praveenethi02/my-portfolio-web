@@ -2,6 +2,7 @@ import "server-only";
 
 import type { SyncSource } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { computeLanguageStats } from "@/lib/language-stats";
 
 // Read-only helpers used by pages. Keeping queries here means pages never
 // talk to Prisma directly, and the "what is visible" rules live in one place.
@@ -13,6 +14,15 @@ export function getVisibleProjects() {
     where: { hidden: false },
     orderBy: [{ featured: "desc" }, { sortOrder: "asc" }, { githubUpdatedAt: "desc" }],
   });
+}
+
+// Language share across all visible projects, biggest first
+export async function getLanguageStats() {
+  const projects = await db.project.findMany({
+    where: { hidden: false },
+    select: { languages: true },
+  });
+  return computeLanguageStats(projects.map((project) => project.languages));
 }
 
 export function getVisibleSkills() {

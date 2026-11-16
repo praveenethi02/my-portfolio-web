@@ -4,8 +4,11 @@
 import { syncGitHubProjects } from "@/lib/github-sync";
 
 async function main() {
-  const { synced, removed } = await syncGitHubProjects();
-  console.log(`GitHub sync finished: ${synced} project(s) synced, ${removed} removed.`);
+  const { synced, removed, languagesFetched } = await syncGitHubProjects();
+  console.log(
+    `GitHub sync finished: ${synced} project(s) synced, ${removed} removed, ` +
+      `languages fetched for ${languagesFetched}.`
+  );
 }
 
 main()

@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { FadeIn } from "@/components/motion/fade-in";
 import { PageHeader } from "@/components/page-header";
 import { SectionHeading } from "@/components/section-heading";
+import { LanguageChart } from "@/components/skills/language-chart";
 import { SkillCategoryCard } from "@/components/skills/skill-category-card";
-import { getVisibleSkills } from "@/lib/queries";
+import { Card, CardContent } from "@/components/ui/card";
+import { getLanguageStats, getVisibleSkills } from "@/lib/queries";
 import { groupSkillsByCategory } from "@/lib/skills";
 
 export const metadata: Metadata = {
@@ -16,7 +18,8 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function SkillsPage() {
-  const skills = await getVisibleSkills();
+  // Run both database queries at the same time
+  const [skills, languageStats] = await Promise.all([getVisibleSkills(), getLanguageStats()]);
   const groups = groupSkillsByCategory(skills);
 
   return (
@@ -48,6 +51,28 @@ export default async function SkillsPage() {
               </li>
             ))}
           </ul>
+        )}
+      </section>
+
+      <section aria-labelledby="languages-heading" className="flex flex-col gap-8">
+        <SectionHeading
+          id="languages-heading"
+          eyebrow="From GitHub"
+          title="Languages in my repositories"
+          description="Share of code across my public GitHub repositories, updated with every sync."
+        />
+        {languageStats.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
+            No language data yet. Run a GitHub sync to load it.
+          </p>
+        ) : (
+          <FadeIn>
+            <Card>
+              <CardContent>
+                <LanguageChart stats={languageStats} />
+              </CardContent>
+            </Card>
+          </FadeIn>
         )}
       </section>
     </div>
